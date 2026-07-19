@@ -11,7 +11,7 @@ into a CLI demo that chains face check → voice check → product prediction.
 | 1. Data merge & product recommendation model | Larissa Inyange | `product_model.py`, `outputs/merged_customer_dataset.csv`, `outputs/product_model.pkl` |
 | 2. Image pipeline & facial recognition model | Rachel Toronga | `image/image_pipeline.py`, `image/image_features.csv`, `image/face_model.pkl` |
 | 3. Audio pipeline & voiceprint verification model | Alliane Umutoniwase | `audio/audio_pipeline.py`, `audio/audio_features.csv`, `audio/voice_model.pkl` |
-| 4. System integration & CLI demo | Merveille Munana | `cli_app.py`, final notebook, report — **TODO, see below** |
+| 4. System integration & CLI demo | Merveille Munana | `cli_app_py.ipynb`, `Final_Notebook.ipynb`, report — **report TODO, see below** |
 
 Identity labels are kept consistent across the face and voice models so Task 4
 can cross-check both: `Alliane`, `larissa`, `meme`, `rachel`.
@@ -23,6 +23,8 @@ can cross-check both: `Alliane`, `larissa`, `meme`, `rachel`.
 ├── customer_social_profiles - customer_social_profiles.csv   # raw data
 ├── customer_transactions - customer_transactions.csv          # raw data
 ├── product_model.py                                           # Task 1
+├── cli_app_py.ipynb                                            # Task 4 -- CLI integration + demo
+├── Final_Notebook.ipynb                                        # Task 4 -- combined notebook (Tasks 1-3 + CLI demo)
 ├── outputs/
 │   ├── merged_customer_dataset.csv
 │   ├── product_model.pkl
@@ -88,14 +90,16 @@ accuracy numbers as directional, not production-grade:
   eval set (4 people, 4 test clips each after augmentation), not a claim the
   model is production-ready.
 
-## TODO — Task 4 (Merveille)
+## TODO — Task 4
 
-- [ ] `cli_app.py`: chain face check → voice check → product prediction, with
-      a denial branch at each step (load `face_model.pkl` + its scaler/feature
-      columns/class names, `voice_model.pkl`, `outputs/product_model.pkl`)
-- [ ] Simulate one authorized full flow (correct face + correct voice → product
+- [x] `cli_app_py.ipynb`: chain face check → voice check → product prediction,
+      with a denial branch at each step (loads `face_model.pkl` + its
+      scaler/feature columns/class names, `voice_model.pkl`,
+      `outputs/product_model.pkl`) — Merveille Munana
+- [x] Simulate one authorized full flow (correct face + correct voice → product
       prediction runs) and one unauthorized attempt (bad face or bad voice →
-      denied before reaching product prediction)
-- [ ] Assemble the final Jupyter notebook pulling together all three tasks
+      denied before reaching product prediction) — Merveille Munana
+- [x] Assemble the final Jupyter notebook pulling together all three tasks —
+      `Final_Notebook.ipynb`
 - [ ] Compile the group report (data description, methodology, results,
-      limitations per task, CLI demo walkthrough)
+      limitations per task, CLI demo walkthrough) — drafted, not yet pushed
