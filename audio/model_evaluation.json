@@ -1,0 +1,22 @@
+{
+  "LogisticRegression": {
+    "accuracy": 0.75,
+    "f1_score": 0.6666666666666666,
+    "log_loss": 0.7731042551779979
+  },
+  "SVM (linear)": {
+    "accuracy": 0.75,
+    "f1_score": 0.6666666666666666,
+    "log_loss": 0.9662922488018781
+  },
+  "RandomForest": {
+    "accuracy": 1.0,
+    "f1_score": 1.0,
+    "log_loss": 0.6689577163009724
+  },
+  "XGBoost": {
+    "accuracy": 0.8125,
+    "f1_score": 0.7722222222222223,
+    "log_loss": 0.606513067328262
+  }
+}
