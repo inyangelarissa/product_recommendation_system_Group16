@@ -32,8 +32,9 @@ from sklearn.metrics import (accuracy_score, f1_score, confusion_matrix,
 # In[2]:
 
 
+import os
 df = pd.read_csv(
-    r"C:\Users\LENOVO\Desktop\test.py\image_features.csv"
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "image_features.csv")
 )
 feature_cols = [c for c in df.columns if c.startswith(('color_hist_', 'gray_hist_', 'hog_'))]
 
