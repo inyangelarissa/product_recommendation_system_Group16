@@ -11,6 +11,7 @@
 # In[1]:
 
 
+import json
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -111,7 +112,12 @@ for name, model in candidates.items():
 
     acc = accuracy_score(y_test, preds)
     f1 = f1_score(y_test, preds, average='macro')
-    results.append({'Model': name, 'Accuracy': acc, 'F1 (macro)': f1})
+    probs = model.predict_proba(X_test_scaled)
+    if name == 'XGBoost':
+        loss = log_loss(y_test_idx, probs, labels=list(range(len(class_names))))
+    else:
+        loss = log_loss(y_test, probs, labels=class_names)
+    results.append({'Model': name, 'Accuracy': acc, 'F1 (macro)': f1, 'Log Loss': loss})
     fitted_models[name] = model
 
 results_df = pd.DataFrame(results).sort_values('F1 (macro)', ascending=False).reset_index(drop=True)
@@ -157,6 +163,7 @@ plt.xlabel('Predicted')
 plt.ylabel('Actual')
 plt.title(f'Confusion Matrix -- {best_name}')
 plt.tight_layout()
+plt.savefig('confusion_matrix.png')
 plt.show()
 
 
@@ -180,6 +187,14 @@ joblib.dump(scaler, 'face_scaler.pkl')
 joblib.dump(feature_cols, 'face_feature_columns.pkl')
 joblib.dump(class_names, 'face_class_names.pkl')
 print('Also saved face_scaler.pkl, face_feature_columns.pkl, face_class_names.pkl')
+
+eval_json = {
+    r['Model']: {'accuracy': r['Accuracy'], 'f1_score': r['F1 (macro)'], 'log_loss': r['Log Loss']}
+    for r in results
+}
+with open('model_evaluation.json', 'w') as f:
+    json.dump(eval_json, f, indent=2)
+print('Saved evaluation metrics -> model_evaluation.json')
 
 
 # ## Summary

@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score, log_loss, classification_report
@@ -253,6 +254,69 @@ def merge_datasets(social_df, txn_features_df, key_col):
     return merged
 
 
+def run_eda(merged: pd.DataFrame, outdir: Path):
+    """Summary stats + labeled plots on the merged dataset: distribution,
+    outliers, correlation, and target class balance."""
+    eda_dir = outdir / "eda"
+    eda_dir.mkdir(parents=True, exist_ok=True)
+
+    numeric_cols = merged.select_dtypes(include=[np.number]).columns.tolist()
+
+    print("\n[EDA] dtypes:")
+    print(merged.dtypes)
+    print("\n[EDA] summary statistics (numeric columns):")
+    print(merged[numeric_cols].describe().T)
+
+    # 1. Distributions of the two core RFM signals
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+    merged["monetary_total"].hist(bins=15, ax=axes[0], edgecolor="black")
+    axes[0].set_title("Distribution: Total Spend per Customer")
+    axes[0].set_xlabel("monetary_total")
+    axes[0].set_ylabel("Customers")
+    merged["recency_days"].hist(bins=15, ax=axes[1], edgecolor="black")
+    axes[1].set_title("Distribution: Recency (days since last purchase)")
+    axes[1].set_xlabel("recency_days")
+    axes[1].set_ylabel("Customers")
+    fig.tight_layout()
+    fig.savefig(eda_dir / "distributions.png")
+    plt.close(fig)
+
+    # 2. Outlier check via boxplot on spend/frequency features
+    outlier_cols = [c for c in ["monetary_total", "monetary_avg", "frequency"] if c in merged.columns]
+    fig, ax = plt.subplots(figsize=(6, 4))
+    merged[outlier_cols].boxplot(ax=ax)
+    ax.set_title("Outlier Check: Spend & Purchase Frequency")
+    fig.tight_layout()
+    fig.savefig(eda_dir / "outliers_boxplot.png")
+    plt.close(fig)
+
+    # 3. Correlation matrix across engineered features
+    corr = merged[numeric_cols].corr()
+    fig, ax = plt.subplots(figsize=(8, 6))
+    im = ax.imshow(corr, cmap="coolwarm", vmin=-1, vmax=1)
+    ax.set_xticks(range(len(numeric_cols)))
+    ax.set_xticklabels(numeric_cols, rotation=90, fontsize=7)
+    ax.set_yticks(range(len(numeric_cols)))
+    ax.set_yticklabels(numeric_cols, fontsize=7)
+    ax.set_title("Correlation Matrix -- Engineered Features")
+    fig.colorbar(im, ax=ax)
+    fig.tight_layout()
+    fig.savefig(eda_dir / "correlation_heatmap.png")
+    plt.close(fig)
+
+    # 4. Target class balance -- explains why accuracy looks modest later
+    fig, ax = plt.subplots(figsize=(6, 4))
+    merged[TARGET_COL].value_counts().plot(kind="bar", ax=ax, edgecolor="black")
+    ax.set_title("Product Class Distribution (prediction target)")
+    ax.set_xlabel("product")
+    ax.set_ylabel("Customer count")
+    fig.tight_layout()
+    fig.savefig(eda_dir / "product_class_distribution.png")
+    plt.close(fig)
+
+    print(f"\n[EDA] saved 4 labeled plots -> {eda_dir}")
+
+
 def train_and_evaluate(merged: pd.DataFrame, key_col: str, outdir: Path):
     feature_cols = [c for c in merged.columns if c not in [key_col, TARGET_COL]]
     X = merged[feature_cols].copy()
@@ -356,6 +420,8 @@ def main():
     merged_path = outdir / "merged_customer_dataset.csv"
     merged.to_csv(merged_path, index=False)
     print(f"\nSaved merged dataset -> {merged_path}")
+
+    run_eda(merged, outdir)
 
     results, best_name = train_and_evaluate(merged, "customer_id", outdir)
     print(f"\nSaved model + evaluation report -> {outdir}/product_model.pkl, {outdir}/model_evaluation.json")

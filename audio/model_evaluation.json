@@ -1,22 +1,22 @@
 {
   "LogisticRegression": {
-    "accuracy": 0.75,
-    "f1_score": 0.6666666666666666,
-    "log_loss": 0.8163559153627562
+    "accuracy": 0.8125,
+    "f1_score": 0.7818181818181819,
+    "log_loss": 0.7292013670427377
   },
   "SVM (linear)": {
     "accuracy": 0.6875,
     "f1_score": 0.6181318681318682,
-    "log_loss": 0.9421254763625534
+    "log_loss": 0.95747492689141
   },
   "RandomForest": {
     "accuracy": 1.0,
     "f1_score": 1.0,
-    "log_loss": 0.6794059377212456
+    "log_loss": 0.6570178941065834
   },
   "XGBoost": {
     "accuracy": 0.9375,
     "f1_score": 0.9365079365079365,
-    "log_loss": 0.4149394231409716
+    "log_loss": 0.41633656300725086
   }
 }
